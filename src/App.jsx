@@ -5,7 +5,6 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isScrolled, setIsScrolled] = useState(false);
- const [products, setProducts] = useState(staticProducts);
   const [loading, setLoading] = useState(false);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [supplierForm, setSupplierForm] = useState({ companyName: '', email: '', phone: '', products: '', description: '' });
@@ -123,6 +122,9 @@ function App() {
     { id: 'polymers', name: 'Polymers', count: staticProducts.filter(p => p.category === 'polymers').length },
   ];
 
+  // Initialize products with static data
+  const [products, setProducts] = useState(staticProducts);
+
   // Filter products locally
   useEffect(() => {
     setLoading(true);
@@ -146,11 +148,6 @@ function App() {
     setProducts(filteredProducts);
     setLoading(false);
   }, [selectedCategory, searchTerm]);
-Initialize products on component mount
-  useEffect(() => {
-    console.log('🚀 Initializing products...');
-    setProducts(staticProducts);
-  }, []); // Empty dependency array = run once on mount
 
   // Scroll effect for header
   useEffect(() => {
