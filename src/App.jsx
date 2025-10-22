@@ -3,8 +3,8 @@ import './index.css';
 
 // API base URL
 const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api' 
-  : '/api';
+  ? 'http://localhost:5000/api'
+  : 'https://chem-marketplace.vercel.app/api' ;
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
