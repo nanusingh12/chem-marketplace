@@ -1,72 +1,156 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 
-// API base URL
-const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api'
-  : 'https://chem-marketplace.vercel.app/api' ;
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+ const [products, setProducts] = useState(staticProducts);
   const [loading, setLoading] = useState(false);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [supplierForm, setSupplierForm] = useState({ companyName: '', email: '', phone: '', products: '', description: '' });
 
-  // Fetch products from backend
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedCategory !== 'all') params.append('category', selectedCategory);
-      if (searchTerm) params.append('search', searchTerm);
-      
-      const response = await fetch(`${API_BASE}/products?${params}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setProducts(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      // Fallback to empty array if backend is not available
-      setProducts([]);
-    } finally {
-      setLoading(false);
+  // Static product data
+  const staticProducts = [
+    {
+      id: 1,
+      name: 'Acetone 99.5% Ultra Pure',
+      category: 'solvents',
+      supplier: 'ChemSupply Global Inc.',
+      price: 45.00,
+      unit: '20L drum',
+      rating: 4.8,
+      reviews: 124,
+      featured: true,
+      delivery: '24h Express',
+      purity: '99.9%',
+      moq: '5 drums',
+      inStock: true,
+      description: 'High-purity acetone suitable for laboratory and industrial use.',
+      image: '🧪'
+    },
+    {
+      id: 2,
+      name: 'Sodium Hydroxide Pearl',
+      category: 'inorganic',
+      supplier: 'BaseChem Laboratories',
+      price: 28.50,
+      unit: '25kg bag',
+      rating: 4.6,
+      reviews: 89,
+      delivery: '48h Standard',
+      purity: '99%',
+      moq: '10 bags',
+      inStock: true,
+      description: 'Sodium hydroxide pearls for various industrial applications.',
+      image: '⚗️'
+    },
+    {
+      id: 3,
+      name: 'Ethanol Absolute ACS',
+      category: 'solvents',
+      supplier: 'PureSolvents International',
+      price: 62.00,
+      unit: '20L drum',
+      rating: 4.9,
+      reviews: 156,
+      featured: true,
+      delivery: '24h Express',
+      purity: '99.9%',
+      moq: '2 drums',
+      inStock: true,
+      description: 'Absolute ethanol meeting ACS specifications.',
+      image: '💧'
+    },
+    {
+      id: 4,
+      name: 'Polyethylene HDPE Granules',
+      category: 'polymers',
+      supplier: 'PolyTech Global',
+      price: 1.25,
+      unit: 'kg',
+      rating: 4.4,
+      reviews: 67,
+      delivery: '72h Economy',
+      purity: 'Food Grade',
+      moq: '1000 kg',
+      inStock: true,
+      description: 'High-density polyethylene granules for manufacturing.',
+      image: '🔗'
+    },
+    {
+      id: 5,
+      name: 'Aspirin BP/USP Grade',
+      category: 'pharma',
+      supplier: 'MediChem Pharmaceuticals',
+      price: 120.00,
+      unit: 'kg',
+      rating: 4.7,
+      reviews: 203,
+      featured: true,
+      delivery: '48h Standard',
+      purity: 'BP Grade',
+      moq: '25 kg',
+      inStock: true,
+      description: 'Pharmaceutical grade aspirin meeting BP and USP standards.',
+      image: '💊'
+    },
+    {
+      id: 6,
+      name: 'Ammonium Nitrate Fertilizer',
+      category: 'agro',
+      supplier: 'AgroGrowth Solutions',
+      price: 0.85,
+      unit: 'kg',
+      rating: 4.3,
+      reviews: 45,
+      delivery: '72h Economy',
+      purity: '34.5% N',
+      moq: '5000 kg',
+      inStock: true,
+      description: 'High-nitrogen fertilizer for agricultural use.',
+      image: '🌱'
     }
-  };
+  ];
 
-  // Fetch categories from backend
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/categories`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setCategories(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      // Fallback categories if backend fails
-      setCategories([
-        { id: 'all', name: 'All Categories', count: 0 },
-        { id: 'organic', name: 'Organic Chemicals', count: 0 },
-        { id: 'inorganic', name: 'Inorganic Chemicals', count: 0 },
-        { id: 'solvents', name: 'Solvents', count: 0 },
-        { id: 'pharma', name: 'Pharmaceuticals', count: 0 },
-        { id: 'agro', name: 'Agrochemicals', count: 0 },
-        { id: 'polymers', name: 'Polymers', count: 0 },
-      ]);
-    }
-  };
+  const categories = [
+    { id: 'all', name: 'All Categories', count: staticProducts.length },
+    { id: 'organic', name: 'Organic Chemicals', count: 0 },
+    { id: 'inorganic', name: 'Inorganic Chemicals', count: staticProducts.filter(p => p.category === 'inorganic').length },
+    { id: 'solvents', name: 'Solvents', count: staticProducts.filter(p => p.category === 'solvents').length },
+    { id: 'pharma', name: 'Pharmaceuticals', count: staticProducts.filter(p => p.category === 'pharma').length },
+    { id: 'agro', name: 'Agrochemicals', count: staticProducts.filter(p => p.category === 'agro').length },
+    { id: 'polymers', name: 'Polymers', count: staticProducts.filter(p => p.category === 'polymers').length },
+  ];
 
-  // Load data on component mount and when filters change
+  // Filter products locally
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    setLoading(true);
+    
+    let filteredProducts = staticProducts;
+    
+    if (selectedCategory !== 'all') {
+      filteredProducts = filteredProducts.filter(product => 
+        product.category === selectedCategory
+      );
+    }
+    
+    if (searchTerm) {
+      filteredProducts = filteredProducts.filter(product =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setProducts(filteredProducts);
+    setLoading(false);
   }, [selectedCategory, searchTerm]);
+Initialize products on component mount
+  useEffect(() => {
+    console.log('🚀 Initializing products...');
+    setProducts(staticProducts);
+  }, []); // Empty dependency array = run once on mount
 
   // Scroll effect for header
   useEffect(() => {
@@ -77,54 +161,17 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Contact form handler
-  const handleContactSubmit = async (e) => {
+  // Simple form handlers
+  const handleContactSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${API_BASE}/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactForm),
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        alert(data.message);
-        setContactForm({ name: '', email: '', message: '' });
-      } else {
-        alert('Failed to send message');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
-    }
+    alert('Thank you for your message! We will get back to you soon.');
+    setContactForm({ name: '', email: '', message: '' });
   };
 
-  // Supplier registration handler
-  const handleSupplierRegister = async (e) => {
+  const handleSupplierRegister = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${API_BASE}/suppliers/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(supplierForm),
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        alert(data.message);
-        setSupplierForm({ companyName: '', email: '', phone: '', products: '', description: '' });
-      } else {
-        alert('Failed to register');
-      }
-    } catch (error) {
-      console.error('Error registering supplier:', error);
-      alert('Failed to register. Please try again.');
-    }
+    alert('Thank you for your interest! Our team will contact you shortly.');
+    setSupplierForm({ companyName: '', email: '', phone: '', products: '', description: '' });
   };
 
   // Premium Header Component
@@ -149,7 +196,7 @@ function App() {
           <div style={{
             fontSize: 'var(--text-2xl)',
             fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--accent-500) 100%)',
+            background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--accent-500) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -211,178 +258,178 @@ function App() {
 
   // Amazing Hero Component
   const Hero = () => (
-  <section style={{
-    background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 50%, var(--primary-700) 100%)',
-    color: 'var(--white)',
-    padding: 'var(--space-20) 0 var(--space-16)',
-    position: 'relative',
-    overflow: 'hidden'
-  }}>
-    {/* Animated Background Elements */}
-    <div style={{
-      position: 'absolute',
-      top: '10%',
-      left: '5%',
-      width: '400px',
-      height: '400px',
-      background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-      borderRadius: '50%',
-      animation: 'float 8s ease-in-out infinite'
-    }}></div>
-    
-    <div style={{
-      position: 'absolute',
-      bottom: '15%',
-      right: '10%',
-      width: '300px',
-      height: '300px',
-      background: 'radial-gradient(circle, rgba(255,64,0,0.1) 0%, transparent 70%)',
-      borderRadius: '50%',
-      animation: 'float 6s ease-in-out infinite 1s'
-    }}></div>
-
-    <div className="container">
+    <section style={{
+      background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 50%, var(--primary-700) 100%)',
+      color: 'var(--white)',
+      padding: 'var(--space-20) 0 var(--space-16)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Animated Background Elements */}
       <div style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-        textAlign: 'center',
-        position: 'relative',
-        zIndex: 10
-      }}>
-        {/* Premium Badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 'var(--space-2)',
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(20px)',
-          padding: 'var(--space-2) var(--space-4)',
-          borderRadius: 'var(--radius-2xl)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          fontSize: 'var(--text-sm)',
-          fontWeight: '500',
-          marginBottom: 'var(--space-8)',
-          animation: 'fadeInUp 0.8s var(--ease-out)',
-          color: 'var(--white)'
-        }}>
-          <span style={{
-            width: '8px',
-            height: '8px',
-            background: 'var(--emerald-500)',
-            borderRadius: '50%',
-            animation: 'pulse 2s infinite'
-          }}></span>
-          Trusted by 5,000+ Chemical Companies Worldwide
-        </div>
+        position: 'absolute',
+        top: '10%',
+        left: '5%',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+        borderRadius: '50%',
+        animation: 'float 8s ease-in-out infinite'
+      }}></div>
+      
+      <div style={{
+        position: 'absolute',
+        bottom: '15%',
+        right: '10%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(255,64,0,0.1) 0%, transparent 70%)',
+        borderRadius: '50%',
+        animation: 'float 6s ease-in-out infinite 1s'
+      }}></div>
 
-        {/* Animated Main Heading */}
-        <h1 style={{
-          fontSize: 'var(--text-5xl)',
-          fontWeight: '800',
-          marginBottom: 'var(--space-6)',
-          lineHeight: '1.1',
-          background: 'linear-gradient(135deg, var(--white) 0%, rgba(255,255,255,0.9) 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          animation: 'fadeInUp 0.8s var(--ease-out) 0.2s both'
+      <div className="container">
+        <div style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+          textAlign: 'center',
+          position: 'relative',
+          zIndex: 10
         }}>
-          Global Chemical
-          <br />
-          <span style={{
-            background: 'linear-gradient(135deg, var(--accent-500) 0%, #ff6b35 100%)',
+          {/* Premium Badge */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)',
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px)',
+            padding: 'var(--space-2) var(--space-4)',
+            borderRadius: 'var(--radius-2xl)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            fontSize: 'var(--text-sm)',
+            fontWeight: '500',
+            marginBottom: 'var(--space-8)',
+            animation: 'fadeInUp 0.8s var(--ease-out)',
+            color: 'var(--white)'
+          }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              background: 'var(--emerald-500)',
+              borderRadius: '50%',
+              animation: 'pulse 2s infinite'
+            }}></span>
+            Trusted by 5,000+ Chemical Companies Worldwide
+          </div>
+
+          {/* Animated Main Heading */}
+          <h1 style={{
+            fontSize: 'var(--text-5xl)',
+            fontWeight: '800',
+            marginBottom: 'var(--space-6)',
+            lineHeight: '1.1',
+            background: 'linear-gradient(135deg, var(--white) 0%, rgba(255,255,255,0.9) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            backgroundClip: 'text',
+            animation: 'fadeInUp 0.8s var(--ease-out) 0.2s both'
           }}>
-            Marketplace
-          </span>
-        </h1>
+            Global Chemical
+            <br />
+            <span style={{
+              background: 'linear-gradient(135deg, var(--accent-500) 0%, #ff6b35 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              Marketplace
+            </span>
+          </h1>
 
-        {/* Animated Subtitle */}
-        <p style={{
-          fontSize: 'var(--text-xl)',
-          opacity: 0.9,
-          marginBottom: 'var(--space-8)',
-          lineHeight: '1.6',
-          animation: 'fadeInUp 0.8s var(--ease-out) 0.4s both',
-          color: 'var(--white)'
-        }}>
-          Connect with trusted suppliers and discover premium-quality chemicals 
-          for your industry needs. Fast, reliable, and secure global transactions.
-        </p>
+          {/* Animated Subtitle */}
+          <p style={{
+            fontSize: 'var(--text-xl)',
+            opacity: 0.9,
+            marginBottom: 'var(--space-8)',
+            lineHeight: '1.6',
+            animation: 'fadeInUp 0.8s var(--ease-out) 0.4s both',
+            color: 'var(--white)'
+          }}>
+            Connect with trusted suppliers and discover premium-quality chemicals 
+            for your industry needs. Fast, reliable, and secure global transactions.
+          </p>
 
-        {/* Premium CTA Buttons */}
-        <div style={{
-          display: 'flex',
-          gap: 'var(--space-4)',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          animation: 'fadeInUp 0.8s var(--ease-out) 0.6s both'
-        }}>
-          <button 
-            className="btn btn-primary" 
-            style={{
-              padding: 'var(--space-5) var(--space-10)',
-              fontSize: 'var(--text-lg)'
-            }}
-            onClick={() => document.getElementById('products').scrollIntoView({ behavior: 'smooth' })}
-          >
-            🚀 Explore Products
-          </button>
-          <button 
-            className="btn btn-secondary" 
-            style={{
-              padding: 'var(--space-5) var(--space-10)',
-              fontSize: 'var(--text-lg)',
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(20px)',
-              border: '2px solid rgba(255, 255, 255, 0.3)',
-              color: 'var(--white)'
-            }}
-            onClick={() => document.getElementById('supplier-registration').scrollIntoView({ behavior: 'smooth' })}
-          >
-            ⭐ Become Supplier
-          </button>
-        </div>
-
-        {/* Trust Indicators */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 'var(--space-8)',
-          marginTop: 'var(--space-12)',
-          animation: 'fadeInUp 0.8s var(--ease-out) 0.8s both'
-        }}>
-          {[
-            { number: '50K+', label: 'Products' },
-            { number: '500+', label: 'Suppliers' },
-            { number: '120+', label: 'Countries' },
-            { number: '99.9%', label: 'Satisfaction' }
-          ].map((stat, index) => (
-            <div key={stat.label} style={{ textAlign: 'center', color: 'var(--white)' }}>
-              <div style={{
-                fontSize: 'var(--text-2xl)',
-                fontWeight: 'bold',
-                marginBottom: 'var(--space-1)',
+          {/* Premium CTA Buttons */}
+          <div style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            animation: 'fadeInUp 0.8s var(--ease-out) 0.6s both'
+          }}>
+            <button 
+              className="btn btn-primary" 
+              style={{
+                padding: 'var(--space-5) var(--space-10)',
+                fontSize: 'var(--text-lg)'
+              }}
+              onClick={() => document.getElementById('products').scrollIntoView({ behavior: 'smooth' })}
+            >
+              🚀 Explore Products
+            </button>
+            <button 
+              className="btn btn-secondary" 
+              style={{
+                padding: 'var(--space-5) var(--space-10)',
+                fontSize: 'var(--text-lg)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(20px)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
                 color: 'var(--white)'
-              }}>
-                {stat.number}
+              }}
+              onClick={() => document.getElementById('supplier-registration').scrollIntoView({ behavior: 'smooth' })}
+            >
+              ⭐ Become Supplier
+            </button>
+          </div>
+
+          {/* Trust Indicators */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 'var(--space-8)',
+            marginTop: 'var(--space-12)',
+            animation: 'fadeInUp 0.8s var(--ease-out) 0.8s both'
+          }}>
+            {[
+              { number: '50K+', label: 'Products' },
+              { number: '500+', label: 'Suppliers' },
+              { number: '120+', label: 'Countries' },
+              { number: '99.9%', label: 'Satisfaction' }
+            ].map((stat, index) => (
+              <div key={stat.label} style={{ textAlign: 'center', color: 'var(--white)' }}>
+                <div style={{
+                  fontSize: 'var(--text-2xl)',
+                  fontWeight: 'bold',
+                  marginBottom: 'var(--space-1)',
+                  color: 'var(--white)'
+                }}>
+                  {stat.number}
+                </div>
+                <div style={{
+                  fontSize: 'var(--text-sm)',
+                  opacity: 0.8,
+                  color: 'var(--white)'
+                }}>
+                  {stat.label}
+                </div>
               </div>
-              <div style={{
-                fontSize: 'var(--text-sm)',
-                opacity: 0.8,
-                color: 'var(--white)'
-              }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 
   // SearchFilters Component
   const SearchFilters = () => (
@@ -484,7 +531,13 @@ function App() {
                   }
                 }}
               >
-                <span>{category.icon}</span>
+                <span>{
+                  category.id === 'solvents' ? '💧' :
+                  category.id === 'inorganic' ? '⚗️' :
+                  category.id === 'pharma' ? '💊' :
+                  category.id === 'agro' ? '🌱' :
+                  category.id === 'polymers' ? '🔗' : '🔬'
+                }</span>
                 {category.name}
                 {category.count > 0 && (
                   <span style={{
@@ -680,7 +733,7 @@ function App() {
                   boxShadow: 'var(--shadow-lg)',
                   fontSize: 'var(--text-2xl)'
                 }}>
-                  {product.image || '🧪'}
+                  {product.image}
                 </div>
                 
                 {/* Delivery Badge */}
