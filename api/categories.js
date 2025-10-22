@@ -1,5 +1,5 @@
 const products = [
-  // Same products array as above
+  // Same products array as in products.js
 ];
 
 export default function handler(req, res) {
@@ -13,6 +13,8 @@ export default function handler(req, res) {
     { id: 'polymers', name: 'Polymers', count: products.filter(p => p.category === 'polymers').length },
   ];
   
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
   res.json({
     success: true,
     data: categories
