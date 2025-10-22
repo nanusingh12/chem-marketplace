@@ -1,5 +1,5 @@
 import React from 'react'
-import { Star, Truck, Shield, Zap } from 'lucide-react'
+import { Star, Truck, Shield, Flask } from 'lucide-react'
 
 const ProductGrid = ({ searchTerm, selectedCategory }) => {
   const products = [
@@ -87,103 +87,95 @@ const ProductGrid = ({ searchTerm, selectedCategory }) => {
   })
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="products">
       <div className="container">
-        <div className="text-center mb-12 fade-in">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Featured Products
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover high-quality chemicals from trusted suppliers worldwide
+        {/* Section Header */}
+        <div className="section-header">
+          <h2 className="section-title">Featured Products</h2>
+          <p className="section-subtitle">
+            High-quality chemicals from verified suppliers worldwide
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Products Grid */}
+        <div className="products-grid">
           {filteredProducts.map((product, index) => (
             <div 
               key={product.id} 
               className="product-card fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="product-image h-48 relative">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <Zap className="w-8 h-8 text-blue-600" />
+              {/* Badge */}
+              {product.featured && (
+                <div className="product-badge">Featured</div>
+              )}
+
+              {/* Image */}
+              <div className="product-image">
+                <div className="product-image-content">
+                  <div className="product-image-icon">
+                    <Flask size={24} />
                   </div>
-                  <p className="text-gray-600 font-medium">Chemical Compound</p>
-                </div>
-                {product.featured && (
-                  <div className="featured-badge">
-                    <Star className="w-3 h-3 inline mr-1" />
-                    Featured
-                  </div>
-                )}
-                <div className="absolute bottom-4 right-4 bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
-                  {product.purity}
+                  <div className="text-caption">Chemical Compound</div>
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-gray-900 mb-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">{product.supplier}</p>
-                  </div>
-                  <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium text-blue-700">{product.rating}</span>
+              {/* Content */}
+              <div className="product-content">
+                {/* Header */}
+                <div className="product-header">
+                  <h3 className="product-title">{product.name}</h3>
+                  <div className="product-rating">
+                    <Star size={14} fill="currentColor" />
+                    <span className="text-sm font-medium">{product.rating}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
+                {/* Supplier */}
+                <p className="product-supplier">{product.supplier}</p>
+
+                {/* Price & Delivery */}
+                <div className="product-price">
                   <div>
-                    <span className="text-2xl font-bold text-gray-900">{product.price}</span>
-                    <span className="text-gray-600 text-sm ml-1">{product.unit}</span>
+                    <span className="price">{product.price}</span>
+                    <span className="price-unit">{product.unit}</span>
                   </div>
-                  <div className="text-sm text-green-600 font-medium bg-green-50 px-2 py-1 rounded">
-                    {product.delivery}
+                  <div className="delivery-badge">{product.delivery}</div>
+                </div>
+
+                {/* Features */}
+                <div className="product-features">
+                  <div className="feature">
+                    <Truck size={16} />
+                    <span>Free Shipping</span>
+                  </div>
+                  <div className="feature">
+                    <Shield size={16} />
+                    <span>Verified</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <Truck className="w-4 h-4" />
-                      <span>Free shipping</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Shield className="w-4 h-4" />
-                      <span>Verified</span>
-                    </div>
-                  </div>
-                  <span className="text-gray-500">{product.reviews} reviews</span>
-                </div>
-
-                <div className="flex gap-3">
-                  <button className="btn btn-primary flex-1">
-                    Add to Cart
-                  </button>
-                  <button className="btn btn-outline px-4">
-                    Sample
-                  </button>
+                {/* Actions */}
+                <div className="product-actions">
+                  <button className="btn btn-primary">Add to Cart</button>
+                  <button className="btn btn-secondary">Sample</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Empty State */}
         {filteredProducts.length === 0 && (
-          <div className="text-center py-16 fade-in">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">🔍</span>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Flask size={24} className="text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
               No products found
             </h3>
             <p className="text-gray-600">
-              Try adjusting your search criteria or browse different categories.
+              Try adjusting your search or browse different categories.
             </p>
           </div>
         )}
