@@ -2616,10 +2616,10 @@ const Header = useCallback(() => (
               flexDirection: isRTL ? 'row-reverse' : 'row'
             }}>
               {[
-                { icon: '📧', label: 'Email', link: 'mailto:info@chemmarket.com' },
-                { icon: '📱', label: 'Phone', link: 'tel:+1-555-CHEMICAL' },
+                { icon: '📧', label: 'Email', link: 'mailto:info@chemibazar.com' },
+                { icon: '📱', label: 'Phone', link: 'tel:+989120351143' },
                 { icon: '🐦', label: 'Twitter', link: 'https://twitter.com/chemmarket' },
-                { icon: '💼', label: 'LinkedIn', link: 'https://linkedin.com/company/chemmarket' }
+                { icon: '💼', label: 'LinkedIn', link: 'https://linkedin.com/company/chemibazar' }
               ].map((social, index) => (
                 <a
                   key={index}
