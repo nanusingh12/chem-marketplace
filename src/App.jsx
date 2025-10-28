@@ -112,7 +112,7 @@ const translations = {
     loggedOut: '👋 You have been logged out successfully.',
     addedToCart: '✅ {product} added to cart!',
     quoteRequested: '📧 Quote request sent for {product}! Our sales team will contact you shortly.',
-    
+
     // Footer
     footerDescription: 'The world\'s most trusted chemical marketplace. Connecting premium suppliers with quality-focused buyers across 120+ countries.',
     marketplace: 'Marketplace',
@@ -345,6 +345,54 @@ const api = {
   }
 };
 
+// Google Translate Component
+const GoogleTranslate = () => {
+  useEffect(() => {
+    // Load Google Translate script
+    const scriptId = 'google-translate-script';
+    
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'text/javascript';
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    // Define the callback function globally
+    window.googleTranslateElementInit = () => {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'fa',
+          includedLanguages: 'en,fa,ar,es,fr,de,it,zh-CN,ru,ja,ko,tr,hi',
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false,
+          gaTrack: true,
+        }, 'google_translate_element');
+      }
+    };
+
+    // Cleanup function
+    return () => {
+      if (window.googleTranslateElementInit) {
+        delete window.googleTranslateElementInit;
+      }
+    };
+  }, []);
+
+  return (
+    <div 
+      id="google_translate_element" 
+      style={{ 
+        display: 'inline-block',
+        margin: '0 var(--space-2)',
+        verticalAlign: 'middle'
+      }}
+    />
+  );
+};
+
 function App() {
   // Language state
   const [currentLanguage, setCurrentLanguage] = useState('en');
@@ -464,7 +512,49 @@ function App() {
       safetyData: 'Available',
       certifications: ['ISO 14001']
     },
-    // ... other products with translations
+    {
+      id: 3,
+      name: currentLanguage === 'en' ? 'Ethanol Absolute 99.9%' : 'اتانول مطلق ۹۹.۹٪',
+      category: 'solvents',
+      supplier: 'PureChem Solutions',
+      price: 62.00,
+      unit: currentLanguage === 'en' ? '10L bottle' : 'بطری ۱۰ لیتری',
+      rating: 4.9,
+      reviews: 156,
+      featured: true,
+      delivery: currentLanguage === 'en' ? '24h Express' : 'ارسال اکسپرس ۲۴ ساعته',
+      purity: '99.9%',
+      moq: currentLanguage === 'en' ? '3 bottles' : '۳ بطری',
+      inStock: true,
+      description: currentLanguage === 'en' 
+        ? 'Absolute ethanol for pharmaceutical and research applications.'
+        : 'اتانول مطلق برای کاربردهای دارویی و تحقیقاتی.',
+      image: '🧴',
+      supplierWebsite: 'https://purechemsolutions.com',
+      safetyData: 'Available',
+      certifications: ['USP', 'Ph Eur']
+    },
+    {
+      id: 4,
+      name: currentLanguage === 'en' ? 'Polyethylene Granules' : 'دانه‌های پلی اتیلن',
+      category: 'polymers',
+      supplier: 'PolymerTech Global',
+      price: 1.25,
+      unit: currentLanguage === 'en' ? 'per kg' : 'به ازای هر کیلو',
+      rating: 4.4,
+      reviews: 67,
+      delivery: currentLanguage === 'en' ? '72h Standard' : 'ارسال استاندارد ۷۲ ساعته',
+      purity: '99.5%',
+      moq: currentLanguage === 'en' ? '1000 kg' : '۱۰۰۰ کیلو',
+      inStock: true,
+      description: currentLanguage === 'en' 
+        ? 'High-quality polyethylene granules for manufacturing.'
+        : 'دانه‌های پلی اتیلن با کیفیت بالا برای تولید.',
+      image: '🔗',
+      supplierWebsite: 'https://polymertech.com',
+      safetyData: 'Available',
+      certifications: ['FDA', 'ISO 9001']
+    }
   ];
 
   const staticBlogPosts = {
@@ -485,14 +575,62 @@ function App() {
         authorRole: currentLanguage === 'en' ? 'Sustainability Expert' : 'متخصص پایداری',
         trending: true,
         views: '2.4K'
+      },
+      {
+        id: 2,
+        title: currentLanguage === 'en' 
+          ? 'Digital Transformation in Chemical Supply Chain'
+          : 'تحول دیجیتال در زنجیره تامین مواد شیمیایی',
+        excerpt: currentLanguage === 'en'
+          ? 'Blockchain and AI are revolutionizing chemical logistics and quality control processes.'
+          : 'بلاکچین و هوش مصنوعی در حال متحول کردن لجستیک مواد شیمیایی و فرآیندهای کنترل کیفیت هستند.',
+        image: '🤖',
+        category: currentLanguage === 'en' ? 'Technology' : 'فناوری',
+        date: '2024-01-12',
+        readTime: currentLanguage === 'en' ? '6 min read' : '۶ دقیقه مطالعه',
+        author: currentLanguage === 'en' ? 'Mike Rodriguez' : 'مایک رودریگز',
+        authorRole: currentLanguage === 'en' ? 'Tech Analyst' : 'تحلیلگر فناوری',
+        trending: true,
+        views: '1.8K'
       }
-      // ... other blog posts
     ],
     innovations: [
-      // ... innovation posts
+      {
+        id: 1,
+        title: currentLanguage === 'en' 
+          ? 'Breakthrough in Catalyst Technology Boosts Efficiency'
+          : 'پیشرفت در فناوری کاتالیزور باعث افزایش کارایی می‌شود',
+        excerpt: currentLanguage === 'en'
+          ? 'New catalyst design reduces energy consumption by 40% in key industrial processes.'
+          : 'طرح جدید کاتالیزور مصرف انرژی را در فرآیندهای صنعتی کلیدی ۴۰٪ کاهش می‌دهد.',
+        image: '⚡',
+        category: currentLanguage === 'en' ? 'Innovation' : 'نوآوری',
+        date: '2024-01-10',
+        readTime: currentLanguage === 'en' ? '5 min read' : '۵ دقیقه مطالعه',
+        author: currentLanguage === 'en' ? 'Dr. Emily Watson' : 'دکتر امیلی واتسون',
+        authorRole: currentLanguage === 'en' ? 'Research Director' : 'مدیر تحقیقات',
+        trending: false,
+        views: '1.2K'
+      }
     ],
     market: [
-      // ... market posts
+      {
+        id: 1,
+        title: currentLanguage === 'en' 
+          ? 'Asia-Pacific Chemical Market Growth Outlook 2024'
+          : 'چشم‌انداز رشد بازار مواد شیمیایی آسیا-اقیانوسیه ۲۰۲۴',
+        excerpt: currentLanguage === 'en'
+          ? 'China and India lead regional expansion with 8.2% projected growth rate.'
+          : 'چین و هند با نرخ رشد پیش‌بینی شده ۸.۲٪ پیشتاز گسترش منطقه‌ای هستند.',
+        image: '📊',
+        category: currentLanguage === 'en' ? 'Market Analysis' : 'تحلیل بازار',
+        date: '2024-01-08',
+        readTime: currentLanguage === 'en' ? '7 min read' : '۷ دقیقه مطالعه',
+        author: currentLanguage === 'en' ? 'James Kim' : 'جیمز کیم',
+        authorRole: currentLanguage === 'en' ? 'Market Analyst' : 'تحلیلگر بازار',
+        trending: false,
+        views: '980'
+      }
     ]
   };
 
@@ -523,7 +661,7 @@ function App() {
     };
 
     initializeData();
-  }, [currentLanguage]); // Re-initialize when language changes
+  }, [currentLanguage, t]);
 
   // Filter products when category or search term changes
   useEffect(() => {
@@ -1243,259 +1381,263 @@ function App() {
       </div>
     </div>
   );
-// Header Component - Updated to include LanguageSwitcher
-const Header = useCallback(() => (
-  <header style={{
-    background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'var(--white)',
-    backdropFilter: 'blur(20px)',
-    borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid var(--gray-200)',
-    padding: 'var(--space-4) 0',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-    transition: 'all 0.4s var(--ease-out)'
-  }}>
-    <div className="container">
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: isRTL ? 'row-reverse' : 'row'
-      }}>
-        <div 
-          style={{
-            fontSize: 'var(--text-2xl)',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--accent-500) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            cursor: 'pointer',
-            transition: 'all 0.3s var(--ease-out)'
-          }} 
-          className="animate-pulse-slow"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          ChemMarket
-        </div>
 
-        <nav style={{
-          display: 'flex',
-          gap: 'var(--space-6)',
-          alignItems: 'center',
-          flexDirection: isRTL ? 'row-reverse' : 'row'
-        }}>
-          {[
-            { id: 'products', name: t.products },
-            { id: 'blog', name: t.insights },
-            { id: 'suppliers', name: t.suppliers },
-            { id: 'contact', name: t.contact }
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveNav(item.id);
-                scrollToSection(item.id);
-              }}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: activeNav === item.id ? 'var(--primary-600)' : 'var(--gray-700)',
-                fontWeight: '500',
-                fontSize: 'var(--text-sm)',
-                padding: 'var(--space-2) var(--space-3)',
-                borderRadius: 'var(--radius-lg)',
-                transition: 'all 0.3s var(--ease-out)',
-                cursor: 'pointer',
-                position: 'relative',
-                fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
-              }}
-              onMouseEnter={(e) => {
-                if (activeNav !== item.id) {
-                  e.target.style.color = 'var(--primary-600)';
-                  e.target.style.background = 'var(--primary-50)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeNav !== item.id) {
-                  e.target.style.color = 'var(--gray-700)';
-                  e.target.style.background = 'transparent';
-                }
-              }}
-            >
-              {item.name}
-              {activeNav === item.id && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-8px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '20px',
-                  height: '2px',
-                  background: 'var(--primary-500)',
-                  borderRadius: 'var(--radius-sm)'
-                }}></div>
-              )}
-            </button>
-          ))}
-        </nav>
-
+  // Header Component
+  const Header = useCallback(() => (
+    <header style={{
+      background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'var(--white)',
+      backdropFilter: 'blur(20px)',
+      borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid var(--gray-200)',
+      padding: 'var(--space-4) 0',
+      position: 'sticky',
+      top: 0,
+      zIndex: 100,
+      transition: 'all 0.4s var(--ease-out)'
+    }}>
+      <div className="container">
         <div style={{
           display: 'flex',
-          gap: 'var(--space-4)',
           alignItems: 'center',
+          justifyContent: 'space-between',
           flexDirection: isRTL ? 'row-reverse' : 'row'
         }}>
-          {/* LANGUAGE SWITCHER - ADDED HERE */}
-          <LanguageSwitcher />
-          
-          {isLoggedIn ? (
-            <>
-              <div style={{
-                position: 'relative',
-                cursor: 'pointer',
-                padding: 'var(--space-2)',
-                borderRadius: 'var(--radius-lg)',
-                transition: 'all 0.3s var(--ease-out)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'var(--primary-50)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'transparent';
-              }}>
-                ❤️
-                {favorites.length > 0 && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '-2px',
-                    [isRTL ? 'left' : 'right']: '-2px',
-                    background: 'var(--accent-500)',
-                    color: 'var(--white)',
-                    borderRadius: '50%',
-                    width: '16px',
-                    height: '16px',
-                    fontSize: 'var(--text-xs)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                    {favorites.length}
-                  </span>
-                )}
-              </div>
-              
-              <div style={{
-                position: 'relative',
-                cursor: 'pointer',
-                padding: 'var(--space-2)',
-                borderRadius: 'var(--radius-lg)',
-                transition: 'all 0.3s var(--ease-out)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'var(--primary-50)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'transparent';
-              }}>
-                🛒
-                {cartItems.length > 0 && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '-2px',
-                    [isRTL ? 'left' : 'right']: '-2px',
-                    background: 'var(--accent-500)',
-                    color: 'var(--white)',
-                    borderRadius: '50%',
-                    width: '16px',
-                    height: '16px',
-                    fontSize: 'var(--text-xs)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                    {cartItems.length}
-                  </span>
-                )}
-              </div>
+          <div 
+            style={{
+              fontSize: 'var(--text-2xl)',
+              fontWeight: 'bold',
+              background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--accent-500) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              cursor: 'pointer',
+              transition: 'all 0.3s var(--ease-out)'
+            }} 
+            className="animate-pulse-slow"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            ChemMarket
+          </div>
 
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-2)',
-                padding: 'var(--space-2) var(--space-3)',
-                background: 'var(--primary-50)',
-                borderRadius: 'var(--radius-xl)',
-                cursor: 'pointer',
-                transition: 'all 0.3s var(--ease-out)',
-                flexDirection: isRTL ? 'row-reverse' : 'row'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'var(--primary-100)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'var(--primary-50)';
-              }}>
+          <nav style={{
+            display: 'flex',
+            gap: 'var(--space-6)',
+            alignItems: 'center',
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }}>
+            {[
+              { id: 'products', name: t.products },
+              { id: 'blog', name: t.insights },
+              { id: 'suppliers', name: t.suppliers },
+              { id: 'contact', name: t.contact }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveNav(item.id);
+                  scrollToSection(item.id);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: activeNav === item.id ? 'var(--primary-600)' : 'var(--gray-700)',
+                  fontWeight: '500',
+                  fontSize: 'var(--text-sm)',
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-lg)',
+                  transition: 'all 0.3s var(--ease-out)',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeNav !== item.id) {
+                    e.target.style.color = 'var(--primary-600)';
+                    e.target.style.background = 'var(--primary-50)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeNav !== item.id) {
+                    e.target.style.color = 'var(--gray-700)';
+                    e.target.style.background = 'transparent';
+                  }
+                }}
+              >
+                {item.name}
+                {activeNav === item.id && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '-8px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '20px',
+                    height: '2px',
+                    background: 'var(--primary-500)',
+                    borderRadius: 'var(--radius-sm)'
+                  }}></div>
+                )}
+              </button>
+            ))}
+          </nav>
+
+          <div style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }}>
+            {/* GOOGLE TRANSLATE COMPONENT */}
+            <GoogleTranslate />
+            
+            {/* LANGUAGE SWITCHER */}
+            <LanguageSwitcher />
+            
+            {isLoggedIn ? (
+              <>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
-                  background: 'linear-gradient(135deg, var(--primary-500), var(--accent-500))',
-                  borderRadius: '50%',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  padding: 'var(--space-2)',
+                  borderRadius: 'var(--radius-lg)',
+                  transition: 'all 0.3s var(--ease-out)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--primary-50)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                }}>
+                  ❤️
+                  {favorites.length > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-2px',
+                      [isRTL ? 'left' : 'right']: '-2px',
+                      background: 'var(--accent-500)',
+                      color: 'var(--white)',
+                      borderRadius: '50%',
+                      width: '16px',
+                      height: '16px',
+                      fontSize: 'var(--text-xs)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold'
+                    }}>
+                      {favorites.length}
+                    </span>
+                  )}
+                </div>
+                
+                <div style={{
+                  position: 'relative',
+                  cursor: 'pointer',
+                  padding: 'var(--space-2)',
+                  borderRadius: 'var(--radius-lg)',
+                  transition: 'all 0.3s var(--ease-out)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--primary-50)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                }}>
+                  🛒
+                  {cartItems.length > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-2px',
+                      [isRTL ? 'left' : 'right']: '-2px',
+                      background: 'var(--accent-500)',
+                      color: 'var(--white)',
+                      borderRadius: '50%',
+                      width: '16px',
+                      height: '16px',
+                      fontSize: 'var(--text-xs)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold'
+                    }}>
+                      {cartItems.length}
+                    </span>
+                  )}
+                </div>
+
+                <div style={{
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--white)',
-                  fontWeight: '600',
-                  fontSize: 'var(--text-sm)'
-                }}>
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <span style={{
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: '600',
-                  color: 'var(--gray-700)'
-                }}>
-                  {user?.name}
-                </span>
-                <button 
-                  onClick={handleLogout}
-                  className="btn btn-secondary"
-                  style={{
-                    padding: 'var(--space-2) var(--space-4)',
-                    fontSize: 'var(--text-sm)'
-                  }}
-                >
-                  {currentLanguage === 'en' ? 'Logout' : 'خروج'}
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <button 
-                className="btn btn-secondary" 
-                style={{
-                  padding: 'var(--space-3) var(--space-6)'
+                  gap: 'var(--space-2)',
+                  padding: 'var(--space-2) var(--space-3)',
+                  background: 'var(--primary-50)',
+                  borderRadius: 'var(--radius-xl)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s var(--ease-out)',
+                  flexDirection: isRTL ? 'row-reverse' : 'row'
                 }}
-                onClick={handleSignIn}
-              >
-                {currentLanguage === 'en' ? 'Sign In' : 'ورود'}
-              </button>
-              <button 
-                className="btn btn-primary"
-                onClick={handleGetStarted}
-              >
-                {t.getStarted}
-              </button>
-            </>
-          )}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--primary-100)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'var(--primary-50)';
+                }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    background: 'linear-gradient(135deg, var(--primary-500), var(--accent-500))',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--white)',
+                    fontWeight: '600',
+                    fontSize: 'var(--text-sm)'
+                  }}>
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span style={{
+                    fontSize: 'var(--text-sm)',
+                    fontWeight: '600',
+                    color: 'var(--gray-700)'
+                  }}>
+                    {user?.name}
+                  </span>
+                  <button 
+                    onClick={handleLogout}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: 'var(--space-2) var(--space-4)',
+                      fontSize: 'var(--text-sm)'
+                    }}
+                  >
+                    {currentLanguage === 'en' ? 'Logout' : 'خروج'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <button 
+                  className="btn btn-secondary" 
+                  style={{
+                    padding: 'var(--space-3) var(--space-6)'
+                  }}
+                  onClick={handleSignIn}
+                >
+                  {currentLanguage === 'en' ? 'Sign In' : 'ورود'}
+                </button>
+                <button 
+                  className="btn btn-primary"
+                  onClick={handleGetStarted}
+                >
+                  {t.getStarted}
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  </header>
-), [isRTL, isScrolled, activeNav, isLoggedIn, user, favorites, cartItems, t, currentLanguage]);
+    </header>
+  ), [isRTL, isScrolled, activeNav, isLoggedIn, user, favorites, cartItems, t, currentLanguage]);
 
   // Hero Component
   const Hero = () => (
@@ -2323,8 +2465,143 @@ const Header = useCallback(() => (
           ))}
         </div>
 
-        {/* Rest of the BlogSection component with RTL support */}
-        {/* ... (similar RTL adaptations for the rest of the blog section) */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gap: 'var(--space-8)',
+          marginBottom: 'var(--space-12)'
+        }}>
+          {staticBlogPosts[activeBlogTab]?.map((post, index) => (
+            <div 
+              key={post.id} 
+              className="card"
+              style={{
+                animation: `fadeInUp 0.8s var(--ease-out) ${index * 0.1}s both`
+              }}
+            >
+              <div style={{ padding: 'var(--space-6)' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-3)',
+                  marginBottom: 'var(--space-4)',
+                  flexDirection: isRTL ? 'row-reverse' : 'row'
+                }}>
+                  <span style={{
+                    fontSize: 'var(--text-3xl)'
+                  }}>
+                    {post.image}
+                  </span>
+                  <div style={{ textAlign: isRTL ? 'right' : 'left' }}>
+                    <h4 style={{
+                      fontSize: 'var(--text-lg)',
+                      fontWeight: '700',
+                      color: 'var(--gray-900)',
+                      marginBottom: 'var(--space-1)',
+                      fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
+                    }}>
+                      {post.title}
+                    </h4>
+                    <p style={{
+                      fontSize: 'var(--text-sm)',
+                      color: 'var(--primary-600)',
+                      fontWeight: '600'
+                    }}>
+                      {post.category}
+                    </p>
+                  </div>
+                </div>
+                
+                <p style={{
+                  fontSize: 'var(--text-base)',
+                  color: 'var(--gray-600)',
+                  marginBottom: 'var(--space-4)',
+                  lineHeight: '1.6',
+                  textAlign: isRTL ? 'right' : 'left',
+                  fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
+                }}>
+                  {post.excerpt}
+                </p>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexDirection: isRTL ? 'row-reverse' : 'row'
+                }}>
+                  <div style={{ textAlign: isRTL ? 'right' : 'left' }}>
+                    <div style={{
+                      fontSize: 'var(--text-sm)',
+                      fontWeight: '600',
+                      color: 'var(--gray-900)'
+                    }}>
+                      {post.author}
+                    </div>
+                    <div style={{
+                      fontSize: 'var(--text-xs)',
+                      color: 'var(--gray-500)'
+                    }}>
+                      {post.date}
+                    </div>
+                  </div>
+                  <button className="btn btn-ghost btn-sm">
+                    {t.readMore}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{
+          background: 'var(--white)',
+          borderRadius: 'var(--radius-2xl)',
+          padding: 'var(--space-12)',
+          textAlign: 'center',
+          boxShadow: 'var(--shadow-lg)'
+        }}>
+          <h3 style={{
+            fontSize: 'var(--text-2xl)',
+            fontWeight: '800',
+            marginBottom: 'var(--space-4)',
+            color: 'var(--gray-900)',
+            fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
+          }}>
+            {t.subscribeTitle}
+          </h3>
+          <p style={{
+            fontSize: 'var(--text-lg)',
+            color: 'var(--gray-600)',
+            marginBottom: 'var(--space-6)',
+            fontFamily: isRTL ? 'B Nazanin, Tahoma, Arial, sans-serif' : 'inherit'
+          }}>
+            {t.subscribeDescription}
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: 'var(--space-3)',
+            maxWidth: '400px',
+            margin: '0 auto',
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }}>
+            <input
+              type="email"
+              placeholder={currentLanguage === 'en' ? 'Enter your email' : 'ایمیل خود را وارد کنید'}
+              style={{
+                flex: 1,
+                padding: 'var(--space-3) var(--space-4)',
+                border: '2px solid var(--gray-300)',
+                borderRadius: 'var(--radius-lg)',
+                fontSize: 'var(--text-base)',
+                transition: 'all 0.3s var(--ease-out)',
+                textAlign: isRTL ? 'right' : 'left'
+              }}
+            />
+            <button className="btn btn-primary">
+              {t.subscribe}
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -2424,7 +2701,7 @@ const Header = useCallback(() => (
           </form>
         </div>
 
-        <div id="supplier-registration" style={{
+        <div id="suppliers" style={{
           background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%)',
           borderRadius: 'var(--radius-2xl)',
           padding: 'var(--space-12)',
@@ -2616,10 +2893,10 @@ const Header = useCallback(() => (
               flexDirection: isRTL ? 'row-reverse' : 'row'
             }}>
               {[
-                { icon: '📧', label: 'Email', link: 'mailto:info@chemibazar.com' },
+                { icon: '📧', label: 'Email', link: 'mailto:info@chemmarket.com' },
                 { icon: '📱', label: 'Phone', link: 'tel:+989120351143' },
                 { icon: '🐦', label: 'Twitter', link: 'https://twitter.com/chemmarket' },
-                { icon: '💼', label: 'LinkedIn', link: 'https://linkedin.com/company/chemibazar' }
+                { icon: '💼', label: 'LinkedIn', link: 'https://linkedin.com/company/chemmarket' }
               ].map((social, index) => (
                 <a
                   key={index}
@@ -2672,7 +2949,7 @@ const Header = useCallback(() => (
               {[
                 { name: t.browseProducts, action: () => scrollToSection('products') },
                 { name: t.insights, action: () => scrollToSection('blog') },
-                { name: t.suppliers, action: () => setActiveNav('suppliers') },
+                { name: t.suppliers, action: () => scrollToSection('suppliers') },
                 { name: t.qualityStandards, action: () => alert(currentLanguage === 'en' ? 'Quality standards information coming soon!' : 'اطلاعات استانداردهای کیفیت به زودی ارائه خواهد شد!') },
                 { name: t.globalShipping, action: () => alert(currentLanguage === 'en' ? 'Shipping information coming soon!' : 'اطلاعات ارسال به زودی ارائه خواهد شد!') }
               ].map((item, index) => (
