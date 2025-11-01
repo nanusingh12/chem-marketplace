@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import './index.css';
 
 // Import translations
@@ -56,7 +56,7 @@ const translations = {
     // Blog
     industryIntelligence: '📈 INDUSTRY INTELLIGENCE',
     insightsTitle: 'Chemical Industry Insights',
-    insightsDescription: 'Stay ahead with the latest trends, innovations, and market analysis from the chemical industry',
+    insightsDescription: 'Stay ahead with the latest trends, innovations and market analysis from the chemical industry',
     marketTrends: '🔥 Market Trends',
     innovations: '💡 Innovations',
     marketAnalysis: '🌍 Market Analysis',
@@ -439,6 +439,7 @@ function App() {
 
   // Application states
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isScrolled, setIsScrolled] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -466,6 +467,34 @@ function App() {
   // Data States
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+
+  // Search debouncing ref
+  const searchTimeoutRef = useRef(null);
+
+  // Handle search input with debouncing
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    // Set new timeout to update searchTerm after delay
+    searchTimeoutRef.current = setTimeout(() => {
+      setSearchTerm(value);
+    }, 300); // 300ms delay
+  };
+
+  // Clean up timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Static fallback data
   const staticProducts = [
@@ -1642,7 +1671,10 @@ function App() {
   // Hero Component
   const Hero = () => (
     <section style={{
-      background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 50%, var(--primary-700) 100%)',
+      background: `linear-gradient(135deg, rgba(41, 59, 95, 0.85) 0%, rgba(41, 59, 95, 0.9) 100%), url("/images/chemical-logistics.jpg")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
       color: 'var(--white)',
       padding: 'var(--space-20) 0 var(--space-16)',
       position: 'relative',
@@ -1650,25 +1682,21 @@ function App() {
     }}>
       <div style={{
         position: 'absolute',
-        top: '10%',
-        [isRTL ? 'right' : 'left']: '5%',
-        width: '400px',
-        height: '400px',
-        background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-        borderRadius: '50%',
-        animation: 'float 8s ease-in-out infinite'
-      }}></div>
+        top: '15%',
+        right: '10%',
+        fontSize: 'var(--text-3xl)',
+        opacity: 0.2,
+        animation: 'float-slow 10s ease-in-out infinite'
+      }}>⚗️</div>
       
       <div style={{
         position: 'absolute',
-        bottom: '15%',
-        [isRTL ? 'left' : 'right']: '10%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(255,64,0,0.1) 0%, transparent 70%)',
-        borderRadius: '50%',
-        animation: 'float 6s ease-in-out infinite 1s'
-      }}></div>
+        bottom: '20%',
+        left: '8%',
+        fontSize: 'var(--text-3xl)',
+        opacity: 0.2,
+        animation: 'float-slow 12s ease-in-out infinite 2s'
+      }}>🧪</div>
 
       <div className="container">
         <div style={{
@@ -1839,8 +1867,8 @@ function App() {
             <input
               type="text"
               placeholder={t.searchPlaceholder}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchInput}
+              onChange={handleSearchInputChange}
               style={{
                 width: '100%',
                 padding: `var(--space-5) var(--space-5) var(--space-5) ${isRTL ? 'var(--space-5)' : 'var(--space-12)'}`,
@@ -2340,6 +2368,7 @@ function App() {
               className="btn btn-primary"
               onClick={() => {
                 setSearchTerm('');
+                setSearchInput('');
                 setSelectedCategory('all');
               }}
             >
@@ -2509,7 +2538,7 @@ function App() {
                     }}>
                       {post.category}
                     </p>
-                  </div>
+                </div>
                 </div>
                 
                 <p style={{
